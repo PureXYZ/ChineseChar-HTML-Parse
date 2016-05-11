@@ -33,5 +33,32 @@ c.execute("ALTER TABLE {tn} ADD COLUMN '{cn}' {ct} DEFAULT '{df}'"\
 #          .format(id_num=insert_num, cc=insert_char, cd=insert_text))
 
 
+while True:
+    line = input_html.readline()
+    if not line:
+        print "Error! start id not found!"
+        break
+    elif line == '<TABLE border=1 id="start">\n':
+        print "Start id found"
+        break
+
+
+while True:
+    line = input_html.readline()
+    if not line:
+        print "Reached end of file."
+        break
+    
+    if line[:4] == "<TR>":
+        print line
+        
+    else:
+        print "Reached end of table"
+        break
+
+
+
 conn.commit()
 conn.close()
+
+print "SQLite db created"

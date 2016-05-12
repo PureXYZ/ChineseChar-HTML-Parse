@@ -1,6 +1,8 @@
 import sqlite3
 import os
 
+
+
 input_html = open("input.html", "r")
 os.remove("output.sqlite")
 
@@ -52,14 +54,19 @@ while True:
 
 
 while True:
+    
     line = input_html.readline()
     
     if not line:
         print "Reached end of file."
         break
-    elif line == '</TABLE id="end">\n'
+    elif line == '</TABLE id="end">\n':
         print "Reached end of table."
         break
+
+    insert_char = "Error"
+    insert_num = 1337
+    insert_text = "Error again"
     
         
     start_tag_index = 0
@@ -70,18 +77,22 @@ while True:
 
     for index,line_char in enumerate(line):
         
-        if index + 4 < len(line):
+        if (index + 4 < len(line)):
             
-            if line[index:index + 4] == "<TR>":
+            if line[index:index + 4] == "<TD>" or line[index:index + 5] == "<TD A":
                 
                 if is_open_tag:
                     print "Error! Nested tags!"
                     break
-                
-                start_tag_index = index + 4
+
+                if line[index:index + 4] == "<TD>":
+                    start_tag_index = index + 4
+                elif line[index:index + 5] == "<TD A":
+                    start_tag_index = index + 19
+                    
                 is_open_tag = True
                 
-            elif line[index:index + 5] == "</TR>":
+            elif line[index:index + 5] == "</TD>":
                 
                 if not is_open_tag:
                     print "Error! Extra close tag!"
@@ -101,13 +112,10 @@ while True:
         else:
             break
         
-    c.execute("INSERT INTO main_table (id_num,chinese_char,text_field) VALUES ({id_num}, '{cc}', '{cd}')"\
-              .format(id_num=insert_num, cc=insert_char, cd=insert_text))
-        
+    c.execute("INSERT INTO {tn} ({idf}, {cn}, {cn2}) VALUES (12, 'test', 'gg')".\
+        format(tn=main_table, idf=id_field, cn=char_field, cn2=text_field))
             
         
-
-
 
 
 

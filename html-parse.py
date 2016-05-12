@@ -112,7 +112,21 @@ def get_alt(line):
 
 
 def sanitize(line):
-    return line
+    new_str = ""
+    counter = 0;
+    while counter < len(line):
+
+        if counter + 4 < len(line):
+            if line[counter:counter + 4] == "&LT;":
+                counter += 4
+                new_str += "<"
+            elif line[counter:counter + 4] == "&GT;":
+                counter += 4
+                new_str += ">"
+
+        new_str += line[counter]
+        counter += 1
+    return new_str
                 
 
 

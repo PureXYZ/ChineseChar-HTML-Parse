@@ -51,7 +51,7 @@ def strip_tags(line):
         if (index + 2 < len(line)):
             if line[index:index + 3] == "<BR":
                 new_str += "\n"
-                index += 3
+                index += 4
             elif line[index:index + 1] == "</":
                 while line[index] != ">":
                     index += 1
@@ -81,7 +81,10 @@ def get_traditional(line):
                         new_str += line[index]
                         index += 1
             index += 1
-        return new_str
+        if new_str:
+            return new_str
+        else:
+            return None
     
                     
 
@@ -91,7 +94,7 @@ def get_simplified(line):
 def get_alt(line):
     new_str = ""
     if len(line) <= 3:
-        return line
+        return
     else:
         index = 0
         while index < len(line):
@@ -102,7 +105,10 @@ def get_alt(line):
                         new_str += line[index]
                         index += 1
             index += 1
-        return new_str
+        if new_str:
+            return new_str
+        else:
+            return None
 
 
 def sanitize(line):

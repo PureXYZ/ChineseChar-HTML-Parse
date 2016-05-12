@@ -49,13 +49,14 @@ def strip_tags(line):
             elif line[index:index + 1] == "</":
                 while line[index] != ">":
                     index += 1
+                index += 1
             elif line[index] == "<":
                 while line[index] != ">":
                     index += 1
-            else:
-                new_str += line[index]
+                index += 1
+        if index < len(line):
+            new_str += line[index]
         index += 1
-    
 
     return new_str
                 

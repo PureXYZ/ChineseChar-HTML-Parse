@@ -30,6 +30,12 @@ c.execute("ALTER TABLE {tn} ADD COLUMN '{cn}' {ct} DEFAULT '{df}'"\
         .format(tn=main_table, cn=char_field, ct=field_type_txt, df="gg"))
 
 c.execute("ALTER TABLE {tn} ADD COLUMN '{cn}' {ct} DEFAULT '{df}'"\
+        .format(tn=main_table, cn="chinese_char2", ct=field_type_txt, df="gg2"))
+
+c.execute("ALTER TABLE {tn} ADD COLUMN '{cn}' {ct} DEFAULT '{df}'"\
+        .format(tn=main_table, cn="chinese_char_alt", ct=field_type_txt, df="gg_alt"))
+
+c.execute("ALTER TABLE {tn} ADD COLUMN '{cn}' {ct} DEFAULT '{df}'"\
         .format(tn=main_table, cn=text_field, ct=field_type_txt, df="nore"))
 
 
@@ -59,6 +65,48 @@ def strip_tags(line):
         index += 1
 
     return new_str
+
+
+def get_traditional(line):
+    new_str = ""
+    if len(line) <= 3:
+        return line
+    else:
+        index = 0
+        while index < len(line):
+            if index + 1 < len(line):
+                if line[index:index + 2] == "(F":
+                    index += 2
+                    while line[index] != ")":
+                        new_str += line[index]
+                        index += 1
+            index += 1
+        return new_str
+    
+                    
+
+def get_simplified(line):
+    return line[0:3]
+
+def get_alt(line):
+    new_str = ""
+    if len(line) <= 3:
+        return line
+    else:
+        index = 0
+        while index < len(line):
+            if index + 1 < len(line):
+                if line[index:index + 2] == "(A":
+                    index += 2
+                    while line[index] != ")":
+                        new_str += line[index]
+                        index += 1
+            index += 1
+        return new_str
+
+
+def sanitize(line):
+    return line
                 
 
 
@@ -84,6 +132,8 @@ while True:
         break
 
     insert_char = "Error"
+    insert_char2 = "Error2"
+    insert_char_alt = "Error_alt"
     insert_num = 1337
     insert_text = "Error again"
     
@@ -131,7 +181,7 @@ while True:
         else:
             break
         
-    item_row.append([insert_num, insert_char, insert_text])
+    item_row.append([insert_num, get_simplified(insert_char),get_traditional(insert_char),get_alt(insert_char), sanitize(insert_text)])
             
         
 
@@ -140,8 +190,10 @@ counter = len(item_row) - 1
 while counter >= 0:
     insert_num = item_row[counter][0]
     insert_char = item_row[counter][1]
-    insert_text = item_row[counter][2]
-    c.execute("INSERT INTO main_table VALUES (?, ?, ?)", (insert_num, insert_char, insert_text))
+    insert_char2 = item_row[counter][2]
+    insert_char_alt = item_row[counter][3]
+    insert_text = item_row[counter][4]
+    c.execute("INSERT INTO main_table VALUES (?, ?, ?, ?, ?)", (insert_num, insert_char, insert_char2, insert_char_alt, insert_text))
     counter -= 1
 
 

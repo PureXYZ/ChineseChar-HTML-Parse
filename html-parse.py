@@ -1,3 +1,5 @@
+
+
 import sqlite3
 import os
 
@@ -16,7 +18,7 @@ field_type_txt = "TEXT"
 
 
 conn = sqlite3.connect(sqlite_out)
-#conn.text_factory = str
+conn.text_factory = str
 c = conn.cursor()
 
 #Create table
@@ -31,15 +33,32 @@ c.execute("ALTER TABLE {tn} ADD COLUMN '{cn}' {ct} DEFAULT '{df}'"\
         .format(tn=main_table, cn=text_field, ct=field_type_txt, df="nore"))
 
 
-
-
-
-def read_tr(line):
-    return line
+item_row = []
 
 
 def strip_tags(line):
-    return line
+
+    new_str = ""
+
+    index = 0
+    while index in range(len(line)):
+        if (index + 2 < len(line)):
+            if line[index:index + 3] == "<BR":
+                new_str += "\n"
+                index += 3
+            elif line[index:index + 1] == "</":
+                while line[index] != ">":
+                    index += 1
+            elif line[index] == "<":
+                while line[index] != ">":
+                    index += 1
+            else:
+                new_str += line[index]
+        index += 1
+    
+
+    return new_str
+                
 
 
 while True:
@@ -98,7 +117,7 @@ while True:
                     break
                 
                 if tag_num == 1:
-                    insert_num =  strip_tags(line[start_tag_index:index])
+                    insert_num =  int(line[start_tag_index:index])
                     tag_num += 1
                 elif tag_num == 2:
                     insert_char = strip_tags(line[start_tag_index:index])
@@ -111,12 +130,18 @@ while True:
         else:
             break
         
-    c.execute("INSERT INTO main_table VALUES (?, ?, ?)", (insert_num, insert_char, insert_text))
+    item_row.append([insert_num, insert_char, insert_text])
             
         
 
+counter = len(item_row) - 1
 
-
+while counter >= 0:
+    insert_num = item_row[counter][0]
+    insert_char = item_row[counter][1]
+    insert_text = item_row[counter][2]
+    c.execute("INSERT INTO main_table VALUES (?, ?, ?)", (insert_num, insert_char, insert_text))
+    counter -= 1
 
 
 conn.commit()

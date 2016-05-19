@@ -19,7 +19,7 @@ os.remove("output.sqlite")
 
 sqlite_out = "output.sqlite"
 main_table = "main_table"
-id_field = "id_num"
+id_field = "_id"
 char_field = "chinese_char"
 text_field = "text_field"
 field_type_int = "INTEGER"
@@ -30,7 +30,7 @@ conn = sqlite3.connect(sqlite_out)
 conn.text_factory = str
 c = conn.cursor()
 
-#   Create table with column "id_num"
+#   Create table with column "_id"
 c.execute("CREATE TABLE {tn} ({idf} {idft})"\
           .format(tn = main_table, idf = id_field,
                   idft = field_type_int,))
